@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Pathfinder</string>
+    <string name="rows">rows</string>
+    <string name="columns">columns</string>
+    <string name="start">Start</string>
+    <string name="end">End</string>
+    <string name="blocked">Blocked</string>
+    <string name="solve">Solve</string>
+</resources>
