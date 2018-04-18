@@ -3,12 +3,10 @@ package org.skynetsoftware.pathfinder.net
 import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.databind.DeserializationFeature
 import com.fasterxml.jackson.databind.ObjectMapper
-
-import java.util.concurrent.TimeUnit
-
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 import retrofit2.converter.jackson.JacksonConverterFactory
+import java.util.concurrent.TimeUnit
 
 class PathfinderRestApi : RestApi<PathfinderService> {
     override val service: PathfinderService

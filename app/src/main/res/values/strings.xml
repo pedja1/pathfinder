@@ -5,5 +5,5 @@
     <string name="start">Start</string>
     <string name="end">End</string>
     <string name="blocked">Blocked</string>
-    <string name="solve">Solve</string>
+    <string name="find_path">Find Path</string>
 </resources>

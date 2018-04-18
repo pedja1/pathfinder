@@ -8,9 +8,7 @@ repositories {
 
 dependencies {
     compile "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
-    compile "com.fasterxml.jackson.dataformat:jackson-dataformat-xml:2.9.5"
     compile "com.fasterxml.jackson.module:jackson-module-kotlin:2.9.0"
-    compile "org.codehaus.woodstox:woodstox-core-asl:4.4.1"
 }
 
 compileKotlin {

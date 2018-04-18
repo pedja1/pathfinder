@@ -1,6 +1,5 @@
 package org.skynetsoftware.pathfinder.rest
 
-import org.skynetsoftware.pathfinder.rest.model.*
 import org.skynetsoftware.pathfinder.core.model.Map
 import org.skynetsoftware.pathfinder.core.model.Node
 import org.skynetsoftware.pathfinder.core.model.Point
@@ -18,12 +17,12 @@ import javax.ws.rs.core.Response
 
 @Path("/pathfinder")
 @Produces(MediaType.APPLICATION_JSON)
-@Consumes(MediaType.APPLICATION_XML)
+@Consumes(MediaType.APPLICATION_JSON)
 class PathfinderResource
 {
     @POST
     @Path("/json")
-    @Consumes(MediaType.APPLICATION_XML)
+    @Consumes(MediaType.APPLICATION_JSON)
     fun findPathDisplayJson(map: Map): Response
     {
         val timer = Timer()

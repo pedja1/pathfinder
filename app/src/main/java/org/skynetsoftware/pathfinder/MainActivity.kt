@@ -1,14 +1,17 @@
 package org.skynetsoftware.pathfinder
 
-import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
+import android.support.v7.app.AppCompatActivity
 import android.text.Editable
-import android.text.TextWatcher
 import android.view.View
 import kotlinx.android.synthetic.main.activity_main.*
+import org.skynetsoftware.pathfinder.core.model.Result
 import org.skynetsoftware.pathfinder.net.PathfinderRestApi
 import org.skynetsoftware.pathfinder.net.PathfinderService
 import org.skynetsoftware.pathfinder.net.RestApi
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class MainActivity : AppCompatActivity() {
 
@@ -48,7 +51,20 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
-    fun solve(view: View) {
+    fun findPath(view: View) {
+        val map = pathView.generateMap()
+        restApi.service.findPath(map).enqueue(object: Callback<Result>
+        {
+            override fun onFailure(call: Call<Result>?, t: Throwable?)
+            {
 
+            }
+
+            override fun onResponse(call: Call<Result>?, response: Response<Result>)
+            {
+                println()
+            }
+
+        })
     }
 }

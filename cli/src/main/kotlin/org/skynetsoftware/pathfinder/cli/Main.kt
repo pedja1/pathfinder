@@ -1,7 +1,6 @@
 package org.skynetsoftware.pathfinder.cli
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import com.fasterxml.jackson.dataformat.xml.XmlMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import joptsimple.OptionParser
 import joptsimple.OptionSet
@@ -70,13 +69,13 @@ fun initCli(optionSet: OptionSet) {
         }
 
         //parse input html
-        val xmlMapper = XmlMapper()
-        xmlMapper.registerModule(KotlinModule())
+        val mapper = ObjectMapper()
+        mapper.registerModule(KotlinModule())
 
         //solve and measure time
         timer.start()
 
-        val solver = AStarSolver({ xmlMapper.readValue<Map>(input, Map::class.java) })
+        val solver = AStarSolver({ mapper.readValue<Map>(input, Map::class.java) })
         solver.solve()
 
         val time = timer.end()

@@ -10,7 +10,6 @@ class PathfinderResourceConfig: ResourceConfig()
         register(PathfinderResource::class.java)
         register(GlobalExceptionMapper::class.java)
         register(JacksonFeature::class.java)
-        register(XmlObjectMapperProvider::class.java)
         register(BufferedImageBodyWriter::class.java)
     }
 }
