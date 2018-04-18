@@ -8,5 +8,5 @@ import retrofit2.http.POST
 
 interface PathfinderService {
     @POST("/pathfinder/json")
-    fun findPath(@Body map: Map): Call<Result>
+    fun findPath(@Body map: Map): Call<MyResponse<Result>>
 }
