@@ -10,6 +10,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 import org.skynetsoftware.pathfinder.core.AStarSolverException
 import org.skynetsoftware.pathfinder.core.model.Result
 import org.skynetsoftware.pathfinder.core.solver.AStarSolver
+import org.skynetsoftware.pathfinder.core.utils.Timer
 import org.skynetsoftware.pathfinder.net.MyResponse
 import org.skynetsoftware.pathfinder.net.PathfinderRestApi
 import org.skynetsoftware.pathfinder.net.PathfinderService
@@ -70,14 +71,23 @@ class MainActivity : AppCompatActivity()
 
     fun findPath(view: View)
     {
+        val timerTotal = Timer()
+        val timerCalculation = Timer()
+        timerTotal.start()
         val map = pathView.generateMap() ?: return
         if (rgFindOptions.checkedRadioButtonId == R.id.rbLocaly)
         {
             try
             {
+                timerCalculation.start()
                 val solver = AStarSolver({ map })
                 solver.solve()//TODO do on background thread
                 pathView.setPath(solver.buildPath(false))
+                timerCalculation.end()
+                val endCalc = timerCalculation.end()
+                val endTotal = timerTotal.end()
+                tvTimeCalculation.text = getString(R.string.time_calculation_, endCalc)
+                tvTimeTotal.text = getString(R.string.time_total_, endTotal)
             }
             catch (e: AStarSolverException)
             {
@@ -106,6 +116,9 @@ class MainActivity : AppCompatActivity()
                             path.points.removeAt(0)
                         }
                         pathView.setPath(path)
+                        timerTotal.end()
+                        tvTimeTotal.text = getString(R.string.time_total_, timerTotal.end())
+                        tvTimeCalculation.text = getString(R.string.time_calculation_, response.body()?.data?.executonTimeInMs)
                     }
                     else
                     {

@@ -181,7 +181,7 @@ class PathView : View {
                 cells.add(Cell(row, col))
             }
         }
-        return Map(cells, Cell((startRect!!.top / cellSize).toInt(), (startRect!!.left / cellSize).toInt()), Cell((endRect!!.top / cellSize).toInt(), (endRect!!.left / cellSize).toInt()))
+        return Map(cells, Cell(((startRect!!.top - gridY) / cellSize).toInt(), ((startRect!!.left - gridX) / cellSize).toInt()), Cell(((endRect!!.top - gridY) / cellSize).toInt(), ((endRect!!.left - gridX) / cellSize).toInt()))
     }
 
     fun setPath(path: Path)

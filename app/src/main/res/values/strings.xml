@@ -9,4 +9,6 @@
     <string name="find_path_offline">Find path offline</string>
     <string name="find_path_rest">Find path using REST API</string>
     <string name="please_wait">Please wait</string>
+    <string name="time_total_">Time Total (ms): %d</string>
+    <string name="time_calculation_">Time Calculation (ms): %d</string>
 </resources>
