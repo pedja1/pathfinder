@@ -122,6 +122,7 @@ class PathView : View {
             return super.onTouchEvent(event)
         }
         if (event.actionMasked == MotionEvent.ACTION_DOWN) {
+            pathRects.clear()
             when (selectionType) {
                 SELECTION_TYPE_START -> {
                     updateRect(startRect, event, { rectF ->  startRect = rectF})
