@@ -100,6 +100,11 @@ class MainActivity : AppCompatActivity()
                     val path = response.body()?.data?.path
                     if(path != null)
                     {
+                        if(path.points.size > 2)
+                        {
+                            path.points.removeAt(path.points.size - 1)
+                            path.points.removeAt(0)
+                        }
                         pathView.setPath(path)
                     }
                     else

@@ -109,7 +109,7 @@ class AStarSolver(readMap: () -> Map?)
             points.add(0, Point(endNode.row, endNode.col))
         }
 
-        return Path(points.reversed())
+        return Path(points.reversed() as MutableList<Point>)
     }
 
     /**
