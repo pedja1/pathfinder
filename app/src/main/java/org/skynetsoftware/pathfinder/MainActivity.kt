@@ -1,11 +1,15 @@
 package org.skynetsoftware.pathfinder
 
+import android.app.ProgressDialog
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.text.Editable
 import android.view.View
+import android.widget.Toast
 import kotlinx.android.synthetic.main.activity_main.*
+import org.skynetsoftware.pathfinder.core.AStarSolverException
 import org.skynetsoftware.pathfinder.core.model.Result
+import org.skynetsoftware.pathfinder.core.solver.AStarSolver
 import org.skynetsoftware.pathfinder.net.MyResponse
 import org.skynetsoftware.pathfinder.net.PathfinderRestApi
 import org.skynetsoftware.pathfinder.net.PathfinderService
@@ -14,27 +18,38 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity()
+{
+    private val restApi: RestApi<PathfinderService> = PathfinderRestApi()
 
-    val restApi: RestApi<PathfinderService> = PathfinderRestApi()
+    private val progressDialog: ProgressDialog by lazy {
+        val pb = ProgressDialog(this)
+        pb.setMessage(getString(R.string.please_wait))
+        return@lazy pb
+    }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
+    override fun onCreate(savedInstanceState: Bundle?)
+    {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        etCols.addTextChangedListener(object: TextWatcherAdapter()
+        etCols.addTextChangedListener(object : TextWatcherAdapter()
         {
-            override fun afterTextChanged(s: Editable?) {
-                if(etCols.text.toString().isNotEmpty()) {
+            override fun afterTextChanged(s: Editable?)
+            {
+                if (etCols.text.toString().isNotEmpty())
+                {
                     pathView.colCount = etCols.text.toString().toInt()
                 }
             }
         })
 
-        etRows.addTextChangedListener(object: TextWatcherAdapter()
+        etRows.addTextChangedListener(object : TextWatcherAdapter()
         {
-            override fun afterTextChanged(s: Editable?) {
-                if(etRows.text.toString().isNotEmpty()) {
+            override fun afterTextChanged(s: Editable?)
+            {
+                if (etRows.text.toString().isNotEmpty())
+                {
                     pathView.rowCount = etRows.text.toString().toInt()
                 }
             }
@@ -43,8 +58,9 @@ class MainActivity : AppCompatActivity() {
         etCols.setText(pathView.colCount.toString())
         etRows.setText(pathView.rowCount.toString())
 
-        rgOptions.setOnCheckedChangeListener({group, checkedId ->
-            when(checkedId) {
+        rgOptions.setOnCheckedChangeListener({ group, checkedId ->
+            when (checkedId)
+            {
                 R.id.rbStart -> pathView.selectionType = SELECTION_TYPE_START
                 R.id.rbEnd -> pathView.selectionType = SELECTION_TYPE_END
                 R.id.rbBlocked -> pathView.selectionType = SELECTION_TYPE_BLOCK
@@ -52,20 +68,54 @@ class MainActivity : AppCompatActivity() {
         })
     }
 
-    fun findPath(view: View) {
-        val map = pathView.generateMap()
-        restApi.service.findPath(map).enqueue(object: Callback<MyResponse<Result>>
+    fun findPath(view: View)
+    {
+        val map = pathView.generateMap() ?: return
+        if (rgFindOptions.checkedRadioButtonId == R.id.rbLocaly)
         {
-            override fun onFailure(call: Call<MyResponse<Result>>?, t: Throwable?)
+            try
             {
-
+                val solver = AStarSolver({ map })
+                solver.solve()//TODO do on background thread
+                pathView.setPath(solver.buildPath(false))
             }
-
-            override fun onResponse(call: Call<MyResponse<Result>>?, response: Response<MyResponse<Result>>)
+            catch (e: AStarSolverException)
             {
-                println()
+                showToast(e.message)
             }
+        }
+        else
+        {
+            progressDialog.show()
+            restApi.service.findPath(map).enqueue(object : Callback<MyResponse<Result>>
+            {
+                override fun onFailure(call: Call<MyResponse<Result>>?, t: Throwable?)
+                {
+                    showToast(t?.message)
+                    progressDialog.dismiss()
+                }
 
-        })
+                override fun onResponse(call: Call<MyResponse<Result>>?, response: Response<MyResponse<Result>>)
+                {
+                    val path = response.body()?.data?.path
+                    if(path != null)
+                    {
+                        pathView.setPath(path)
+                    }
+                    else
+                    {
+                        showToast(response.body()?.message)
+                    }
+                    progressDialog.dismiss()
+                }
+
+            })
+        }
+
+    }
+
+    private fun showToast(message: String?)
+    {
+        Toast.makeText(this, message, Toast.LENGTH_LONG).show()
     }
 }

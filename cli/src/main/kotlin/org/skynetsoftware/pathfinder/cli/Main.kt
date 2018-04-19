@@ -5,8 +5,8 @@ import com.fasterxml.jackson.module.kotlin.KotlinModule
 import joptsimple.OptionParser
 import joptsimple.OptionSet
 import org.glassfish.jersey.grizzly2.httpserver.GrizzlyHttpServerFactory
-import org.skynetsoftware.pathfinder.core.model.*
 import org.skynetsoftware.pathfinder.core.model.Map
+import org.skynetsoftware.pathfinder.core.model.Result
 import org.skynetsoftware.pathfinder.core.solver.AStarSolver
 import org.skynetsoftware.pathfinder.core.utils.*
 import org.skynetsoftware.pathfinder.rest.PathfinderResourceConfig
@@ -88,16 +88,7 @@ fun initCli(optionSet: OptionSet) {
         val result = Result()
         result.executonTimeInMs = time
 
-        val path = Path()
-        val points = ArrayList<Point>()
-
-        var currentDrawingNode: Node? = solver.endNode
-        while (currentDrawingNode != null && currentDrawingNode != solver.startNode) {
-            points.add(Point(currentDrawingNode.row, currentDrawingNode.col))
-            currentDrawingNode = currentDrawingNode.parent
-        }
-        path.points = points.reversed()
-        result.path = path
+        result.path = solver.buildPath(true)
 
         //write json
         jsonMapper.writeValue(output, result)
@@ -106,7 +97,7 @@ fun initCli(optionSet: OptionSet) {
 
         //display result as image
         if (optionSet.has(PARAM_DISPLAY)) {
-            val bufferedImage = generateImage(solver.map, solver.rows, solver.cols, solver.startNode, solver.endNode)
+            val bufferedImage = generateImage(solver.map!!, solver.rows, solver.cols, solver.startNode, solver.endNode)
             displayImage("Solved", bufferedImage)
         }
     } catch (e: Exception) {

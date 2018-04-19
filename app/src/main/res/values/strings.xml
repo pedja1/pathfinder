@@ -6,4 +6,7 @@
     <string name="end">End</string>
     <string name="blocked">Blocked</string>
     <string name="find_path">Find Path</string>
+    <string name="find_path_offline">Find path offline</string>
+    <string name="find_path_rest">Find path using REST API</string>
+    <string name="please_wait">Please wait</string>
 </resources>

@@ -1,8 +1,6 @@
 package org.skynetsoftware.pathfinder.rest
 
 import org.skynetsoftware.pathfinder.core.model.Map
-import org.skynetsoftware.pathfinder.core.model.Node
-import org.skynetsoftware.pathfinder.core.model.Point
 import org.skynetsoftware.pathfinder.core.model.Result
 import org.skynetsoftware.pathfinder.core.solver.AStarSolver
 import org.skynetsoftware.pathfinder.core.utils.Timer
@@ -38,17 +36,7 @@ class PathfinderResource
         val result = Result()
         result.executonTimeInMs = time
 
-        val path = org.skynetsoftware.pathfinder.core.model.Path()
-        val points = ArrayList<Point>()
-
-        var currentDrawingNode: Node? = solver.endNode
-        while (currentDrawingNode != null && currentDrawingNode != solver.startNode)
-        {
-            points.add(Point(currentDrawingNode.row, currentDrawingNode.col))
-            currentDrawingNode = currentDrawingNode.parent
-        }
-        path.points = points.reversed()
-        result.path = path
+        result.path = solver.buildPath(true)
         return successResponse(data = result)
     }
 
@@ -61,7 +49,7 @@ class PathfinderResource
         val solver = AStarSolver({ map })
         solver.solve()
 
-        val bufferedImage = generateImage(solver.map, solver.rows, solver.cols, solver.startNode, solver.endNode)
+        val bufferedImage = generateImage(solver.map!!, solver.rows, solver.cols, solver.startNode, solver.endNode)
         return Response.ok().entity(bufferedImage).build()
     }
 

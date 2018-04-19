@@ -1,12 +1,16 @@
 package org.skynetsoftware.pathfinder
 
 import android.content.Context
-import android.graphics.*
+import android.graphics.Canvas
+import android.graphics.Color
+import android.graphics.Paint
+import android.graphics.RectF
 import android.util.AttributeSet
 import android.view.MotionEvent
 import android.view.View
 import org.skynetsoftware.pathfinder.core.model.Cell
 import org.skynetsoftware.pathfinder.core.model.Map
+import org.skynetsoftware.pathfinder.core.model.Path
 
 const val SELECTION_TYPE_START = 0
 const val SELECTION_TYPE_END = 1
@@ -38,6 +42,7 @@ class PathView : View {
     private var startRect: RectF? = null
     private var endRect: RectF? = null
     private var blockedRects: MutableList<RectF> = ArrayList()
+    private var pathRects: MutableList<RectF> = ArrayList()
 
     constructor(context: Context) : super(context)
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
@@ -59,6 +64,10 @@ class PathView : View {
         gridHeight = (rowCount * cellSize).toFloat()
         gridX = ((width - gridWidth) / 2)
         gridY = ((height - gridHeight) / 2)
+        startRect = null
+        endRect = null
+        blockedRects.clear()
+        pathRects.clear()
     }
 
     override fun onLayout(changed: Boolean, left: Int, top: Int, right: Int, bottom: Int) {
@@ -84,6 +93,14 @@ class PathView : View {
 
         for (rect in blockedRects) {
             paint.color = Color.BLACK
+            paint.style = Paint.Style.FILL
+            val rx = gridX + (((rect.left - gridX) / cellSize).toInt() * cellSize).toFloat()
+            val ry = gridY + (((rect.top - gridY) / cellSize).toInt() * cellSize).toFloat()
+            canvas.drawRect(rx, ry, rx + cellSize, ry + cellSize, paint)
+        }
+
+        for (rect in pathRects) {
+            paint.color = Color.CYAN
             paint.style = Paint.Style.FILL
             val rx = gridX + (((rect.left - gridX) / cellSize).toInt() * cellSize).toFloat()
             val ry = gridY + (((rect.top - gridY) / cellSize).toInt() * cellSize).toFloat()
@@ -147,20 +164,36 @@ class PathView : View {
         }
     }
 
-    fun generateMap(): Map
+    fun generateMap(): Map?
     {
+        if(startRect == null || endRect == null)
+            return null
         val tmpRect = RectF()
         val cells = ArrayList<Cell>()
-        for(row in 0..rowCount) {
-            for (col in 0..colCount) {
-                tmpRect.set((col * cellSize).toFloat(), (row * cellSize).toFloat(), (col * cellSize + cellSize).toFloat(), (row * cellSize + cellSize).toFloat())
+        for(row in 0 until rowCount) {
+            for (col in 0 until colCount) {
+                val x = gridX + (col * cellSize).toFloat()
+                val y = gridY + (row * cellSize).toFloat()
+                tmpRect.set(x, y, x + cellSize, y + cellSize)
                 if(blockedRects.contains(tmpRect)) {
                     continue
                 }
                 cells.add(Cell(row, col))
             }
         }
-        val map = Map(cells, Cell((startRect!!.left / cellSize).toInt(), (startRect!!.top / cellSize).toInt()), Cell((endRect!!.left / cellSize).toInt(), (endRect!!.top / cellSize).toInt()))
-        return map
+        return Map(cells, Cell((startRect!!.top / cellSize).toInt(), (startRect!!.left / cellSize).toInt()), Cell((endRect!!.top / cellSize).toInt(), (endRect!!.left / cellSize).toInt()))
+    }
+
+    fun setPath(path: Path)
+    {
+        pathRects.clear()
+        for(point in path.points)
+        {
+            val x = gridX + point.col * cellSize
+            val y = gridY + point.row * cellSize
+            val rect = RectF(x, y, x + cellSize, y + cellSize)
+            pathRects.add(rect)
+        }
+        invalidate()
     }
 }

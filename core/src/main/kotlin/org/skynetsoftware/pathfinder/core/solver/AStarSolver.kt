@@ -1,19 +1,18 @@
 package org.skynetsoftware.pathfinder.core.solver
 
 import org.skynetsoftware.pathfinder.core.AStarSolverException
-import org.skynetsoftware.pathfinder.core.model.Cell
+import org.skynetsoftware.pathfinder.core.model.*
 import org.skynetsoftware.pathfinder.core.model.Map
-import org.skynetsoftware.pathfinder.core.model.Node
 
 //http://homepages.abdn.ac.uk/f.guerin/pages/teaching/CS1013/practicals/aStarTutorial.htm
 private const val MOVEMENT_COST = 10
 
 /**
  * Modified A* Algorithm implementation for 2d square-cells grid without diagonal jumps*/
-class AStarSolver(readMap: () -> Map)
+class AStarSolver(readMap: () -> Map?)
 {
 
-    val map: Map
+    val map: Map?
     val rows: Int
     val cols: Int
 
@@ -26,9 +25,9 @@ class AStarSolver(readMap: () -> Map)
     {
         //read input
         map = readMap()
-        if (map.cells.isEmpty())
+        if (map == null || map.cells.isEmpty())
         {
-            throw AStarSolverException("Input map has no cells")
+            throw AStarSolverException("Input map is not valid")
         }
 
         //calculate row and column count by adding row/column to list, sorting the list, and getting last number
@@ -95,6 +94,24 @@ class AStarSolver(readMap: () -> Map)
             throw AStarSolverException("Path not found")
     }
 
+    fun buildPath(includeStartAndEnd: Boolean): Path
+    {
+        val points = ArrayList<Point>()
+
+        var currentNode: Node? = endNode.parent
+        while (currentNode != null && currentNode != startNode) {
+            points.add(Point(currentNode.row, currentNode.col))
+            currentNode = currentNode.parent
+        }
+
+        if(includeStartAndEnd) {
+            points.add(Point(startNode.row, startNode.col))
+            points.add(0, Point(endNode.row, endNode.col))
+        }
+
+        return Path(points.reversed())
+    }
+
     /**
      * Main function that updates current node*/
     private fun checkNode(currentNode: Node, checkingNode: Node?, endNode: Node, openNodes: MutableList<Node>, closedNodes: MutableList<Node>)
@@ -128,8 +145,8 @@ class AStarSolver(readMap: () -> Map)
      * This simply calculates straight vertical jumps plus straight horizontal jumps and multiplies result by MOVEMENT_COST*/
     private fun calculateHeuristic(checkingNode: Node, endNode: Node): Int
     {
-        val horizontal = Math.abs(endNode.row - checkingNode.row)
-        val vertical = Math.abs(endNode.col - checkingNode.col)
+        val horizontal = Math.abs(endNode.col - checkingNode.col)
+        val vertical = Math.abs(endNode.row - checkingNode.row)
         return (vertical + horizontal) * MOVEMENT_COST
     }
 
@@ -137,28 +154,28 @@ class AStarSolver(readMap: () -> Map)
      * Get the node that is left of the current node, or null if cell is blocked or out of grid*/
     private fun getLeftAdjacentNode(currentNode: Node, grid: Array<Array<Node?>>): Node?
     {
-        return grid.getOrNull(currentNode.row - 1)?.getOrNull(currentNode.col)
+        return grid.getOrNull(currentNode.row)?.getOrNull(currentNode.col - 1)
     }
 
     /**
      * Get the node that is right of the current node, or null if cell is blocked or out of grid*/
     private fun getRightAdjacentNode(currentNode: Node, grid: Array<Array<Node?>>): Node?
     {
-        return grid.getOrNull(currentNode.row + 1)?.getOrNull(currentNode.col)
+        return grid.getOrNull(currentNode.row)?.getOrNull(currentNode.col + 1)
     }
 
     /**
      * Get the node that is top of the current node, or null if cell is blocked or out of grid*/
     private fun getTopAdjacentNode(currentNode: Node, grid: Array<Array<Node?>>): Node?
     {
-        return grid.getOrNull(currentNode.row)?.getOrNull(currentNode.col - 1)
+        return grid.getOrNull(currentNode.row - 1)?.getOrNull(currentNode.col)
     }
 
     /**
      * Get the node that is bottom of the current node, or null if cell is blocked or out of grid*/
     private fun getBottomAdjacentNode(currentNode: Node, grid: Array<Array<Node?>>): Node?
     {
-        return grid.getOrNull(currentNode.row)?.getOrNull(currentNode.col + 1)
+        return grid.getOrNull(currentNode.row + 1)?.getOrNull(currentNode.col)
     }
 
     private fun assertStartEndPoint(grid: Array<Array<Node?>>, cell: Cell)
