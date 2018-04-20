@@ -29,9 +29,9 @@ Supporter command line arguments (flags)
 `-i {path}` - input file - **required if -d is not present**  
 `-o {path}` - output file  
 `-s` - display graphic representation of solved path (image)  
-`-d` - start as REST API daemon. `-i`, `-o` and `-s` are ignored if this flag is used  
-`-a` - daemon host (eg. localhost), default is `localhost`  
-`-p` - daemon port (eg. 8080), default is `8080`  
+`-d` - start as REST API server. `-i`, `-o` and `-s` are ignored if this flag is used  
+`-a` - server host (eg. localhost), default is `localhost`  
+`-p` - server port (eg. 8080), default is `8080`  
 
 ### rest
 Check cli section on how to start REST API Server
