@@ -1,24 +1,24 @@
-#pathfinder
+# pathfinder
 
-##MODULES
+## MODULES
 
-###core
+### core
 Contains core classes for solving path and reading input and output data  
 used in all other modules
-###app
+### app
 Android application demonstrating pathfinder functionality using both local calculation and rest api
-###cli
+### cli
 java command line interface
-###rest
+### rest
 REST API
 
-##How to run
-###app
+## How to run
+### app
 1. Import project in Android Studio and click 'run'  
 or  
 2. `./gradlew assembledebug` then install apk from `{project_root}/app/build/outputs/apk/debug/app-debug.apk`
 
-###cli
+### cli
 1. To compile 'fat' jar (jar that includes all dependencies) execute the following in terminal  
 `./gradlew cli:shadowjar`
 2. Jar file is located in: `{project_root}/cli/build/lib/cli-1.0-SNAPSHOT-all.jar`
@@ -33,12 +33,12 @@ Supporter command line arguments (flags)
 `-a` - daemon host (eg. localhost), default is `localhost`  
 `-p` - daemon port (eg. 8080), default is `8080`  
 
-###rest
+### rest
 Check cli section on how to start REST API Server
 
 Api is using JSON for communication with clients
 
-####Endpoints
+#### Endpoints
 
 - `POST /pathfinder/json` - returns result a json  
 - `POST /pathfinder/image` - returns image with graphic representation of solved path  
