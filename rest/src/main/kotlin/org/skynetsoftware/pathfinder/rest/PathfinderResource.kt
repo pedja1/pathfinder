@@ -42,7 +42,7 @@ class PathfinderResource
 
     @POST
     @Path("/image")
-    @Consumes(MediaType.APPLICATION_XML)
+    @Consumes(MediaType.APPLICATION_JSON)
     @Produces("image/png")
     fun findPathDisplayImage(map: Map): Response
     {
